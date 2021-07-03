@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block content %}
+<body class="text-center">
+    <div class="container">
+        <form method="POST" class="form-signin" style="color:white">
+            {{ form.hidden_tag() }}
+            <img class="mb-4" src="https://image.flaticon.com/icons/png/512/21/21645.png" alt="" width="300" height="300">
+            <h1 class="h3 mb-3 font-weight-normal">
+                Insira seus dados
+            </h1>
+            <br>
+            {{ form.login.label() }}
+            {{ form.login(class="form-control") }}
+
+            {{ form.password.label() }}
+            {{ form.password(class="form-control") }}
+
+            <br>
+
+
+            <div class="checkbox mb-3">
+               <h6>Não possui uma conta?</h6>
+               <a class="btn btn-sm btn-secondary" href="{{ url_for('register_user_page') }}">Registrar</a>
+            </div>
+
+            {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+
+        </form>
+    </div>
+</body>
+{% endblock %}
