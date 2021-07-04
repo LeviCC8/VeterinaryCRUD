@@ -103,6 +103,10 @@ class Animal(db.Model):
         self.race = race
         db.session.commit()
 
+    def update_health(self, health):
+        self.health = health
+        db.session.commit()
+
 
 class Consultation(db.Model):
     id = db.Column(db.Integer(), primary_key=True)

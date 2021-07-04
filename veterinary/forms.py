@@ -109,3 +109,10 @@ class RegisterAnimalForm(FlaskForm):
 
 class DeleteAnimalForm(FlaskForm):
     submit = SubmitField(label='Deletar Animal')
+
+
+class UpdateHealthForm(FlaskForm):
+    health = StringField(label='Nova Saúde:', validators=[
+        Length(min=3, max=30, message='Saúde precisa ter entre 3 à 30 caracteres'),
+        DataRequired(message='Saúde não fornecida')])
+    submit = SubmitField(label='Atualizar Saúde')

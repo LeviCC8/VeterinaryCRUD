@@ -141,53 +141,73 @@ def animals_page():
     update_animal_form = RegisterAnimalForm()
     register_animal_form = RegisterAnimalForm()
     delete_animal_form = DeleteAnimalForm()
+    update_health_form = UpdateHealthForm()
     if request.method == 'POST':
-        # Update Animal logic
-        updated_animal = request.form.get('updated_animal')
-        animal_to_update = Animal.query.filter_by(id=updated_animal).first()
-        if animal_to_update:
-            if update_animal_form.validate_on_submit():
-                animal_to_update.update_infos(name=update_animal_form.name.data,
-                                      age=update_animal_form.age.raw_data[0],
-                                      type=update_animal_form.type.data,
-                                      race=update_animal_form.race.data)
-                flash(f"Seu animal {animal_to_update.name} foi atualizado com sucesso!",
+        if current_user.is_client():
+            # Update Animal logic
+            updated_animal = request.form.get('updated_animal')
+            animal_to_update = Animal.query.filter_by(id=updated_animal).first()
+            if animal_to_update:
+                if update_animal_form.validate_on_submit():
+                    animal_to_update.update_infos(name=update_animal_form.name.data,
+                                          age=update_animal_form.age.raw_data[0],
+                                          type=update_animal_form.type.data,
+                                          race=update_animal_form.race.data)
+                    flash(f"Seu animal {animal_to_update.name} foi atualizado com sucesso!",
+                          category='success')
+
+                if update_animal_form.errors != {}:  # If there are errors from the validations
+                    for err_msg in update_animal_form.errors.values():
+                        flash(f'Falha na atualização do animal: {err_msg}', category='danger')
+
+            # Delete Animal logic
+            deleted_animal = request.form.get('deleted_animal')
+            animal_to_delete = Animal.query.filter_by(id=deleted_animal).first()
+            if animal_to_delete:
+                flash(f"Seu animal {animal_to_delete.name} foi deletado do sistema!", category='success')
+                Animal.query.filter_by(id=deleted_animal).delete()
+                db.session.commit()
+
+            # Add Animal Logic
+            if register_animal_form.validate_on_submit() and animal_to_update is None:
+                animal_to_create = Animal(name=register_animal_form.name.data,
+                                      age=register_animal_form.age.raw_data[0],
+                                      type=register_animal_form.type.data,
+                                      race=register_animal_form.race.data,
+                                      health='Saudável',
+                                      client_login=current_user.login)
+                db.session.add(animal_to_create)
+                db.session.commit()
+                flash(f"Seu animal {animal_to_create.name} está cadastrado no sistema e pronto para marcar consultas!",
                       category='success')
 
-            if update_animal_form.errors != {}:  # If there are errors from the validations
-                for err_msg in update_animal_form.errors.values():
-                    flash(f'Falha na atualização do animal: {err_msg}', category='danger')
+            if animal_to_update is None and animal_to_delete is None and register_animal_form.errors != {}:  # If there are errors from the validations
+                for err_msg in register_animal_form.errors.values():
+                    flash(f'Falha no registro do novo animal: {err_msg}', category='danger')
+        elif current_user.is_veterinarian():
+            # Update Health logic
+            updated_health = request.form.get('updated_health')
+            animal_to_update = Animal.query.filter_by(id=updated_health).first()
+            if animal_to_update:
+                if update_health_form.validate_on_submit():
+                    animal_to_update.update_health(update_health_form.health.data)
+                    flash(f"A saúde do animal {animal_to_update.name} foi atualizada com sucesso para {animal_to_update.health}!",
+                          category='success')
 
-        # Delete Animal logic
-        deleted_animal = request.form.get('deleted_animal')
-        animal_to_delete = Animal.query.filter_by(id=deleted_animal).first()
-        if animal_to_delete:
-            flash(f"Seu animal {animal_to_delete.name} foi deletado do sistema!", category='success')
-            Animal.query.filter_by(id=deleted_animal).delete()
-            db.session.commit()
-
-        # Add Animal Logic
-        if register_animal_form.validate_on_submit() and animal_to_update is None:
-            animal_to_create = Animal(name=register_animal_form.name.data,
-                                  age=register_animal_form.age.raw_data[0],
-                                  type=register_animal_form.type.data,
-                                  race=register_animal_form.race.data,
-                                  health='Saudável',
-                                  client_login=current_user.login)
-            db.session.add(animal_to_create)
-            db.session.commit()
-            flash(f"Seu animal {animal_to_create.name} está cadastrado no sistema e pronto para marcar consultas!",
-                  category='success')
-
-        if animal_to_update is None and animal_to_delete is None and register_animal_form.errors != {}:  # If there are errors from the validations
-            for err_msg in register_animal_form.errors.values():
-                flash(f'Falha no registro do novo animal: {err_msg}', category='danger')
+                if update_health_form.errors != {}:  # If there are errors from the validations
+                    for err_msg in update_health_form.errors.values():
+                        flash(f'Falha na atualização da saúde do animal: {err_msg}', category='danger')
 
         return redirect(url_for('animals_page'))
     if request.method == "GET":
-        animals = Animal.query.filter_by(client_login=current_user.login)
+        if current_user.is_client():
+            animals = Animal.query.filter_by(client_login=current_user.login)
+        elif current_user.is_veterinarian():
+            animals = Animal.query.all()
         return render_template('animals.html',
                                animals=animals,
                                update_animal_form=update_animal_form,
                                register_animal_form=register_animal_form,
-                               delete_animal_form=delete_animal_form)
+                               delete_animal_form=delete_animal_form,
+                               update_health_form=update_health_form,
+                               User=User)

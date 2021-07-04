@@ -16,6 +16,9 @@ Animais
                 <th scope="col">Tipo</th>
                 <th scope="col">Raça</th>
                 <th scope="col">Saúde</th>
+                {% if current_user.is_veterinarian() %}
+                    <th scope="col">Responsável</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -27,25 +30,36 @@ Animais
             <td>{{ animal.type }}</td>
             <td>{{ animal.race }}</td>
             <td>{{ animal.health }}</td>
+            {% if current_user.is_veterinarian() %}
+                <td>{{ User.query.filter_by(login=animal.client_login).first().name  }}</td>
+            {% endif %}
             <td>
-                <button class="btn btn-outline btn-success" data-toggle="modal"
-                        data-target="#Modal-UpdateInfo-{{ animal.id }}">Atualizar Informações
-                </button>
-                <button class="btn btn-outline btn-danger" data-toggle="modal"
-                        data-target="#Modal-DeleteAnimal-{{ animal.id }}">Remover Animal
-                </button>
+                {% if current_user.is_client() %}
+                    <button class="btn btn-outline btn-success" data-toggle="modal"
+                            data-target="#Modal-UpdateInfo-{{ animal.id }}">Atualizar Informações
+                    </button>
+                    <button class="btn btn-outline btn-danger" data-toggle="modal"
+                            data-target="#Modal-DeleteAnimal-{{ animal.id }}">Remover Animal
+                    </button>
+                {% else %}
+                    <button class="btn btn-outline btn-success" data-toggle="modal"
+                            data-target="#Modal-UpdateHealth-{{ animal.id }}">Atualizar Saúde
+                    </button>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
         </tbody>
     </table>
     <div class="container">
-        {% include 'includes/add_animal_modal.html' %}
-        <div class="row justify-content-md-center">
-            <button class="btn btn-outline btn-info" data-toggle="modal"
-                    data-target="#Modal-AddIAnimal">Adicionar um animal
-            </button>
-        </div>
+        {% if current_user.is_client() %}
+            {% include 'includes/add_animal_modal.html' %}
+            <div class="row justify-content-md-center">
+                <button class="btn btn-outline btn-info" data-toggle="modal"
+                        data-target="#Modal-AddIAnimal">Adicionar um animal
+                </button>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
