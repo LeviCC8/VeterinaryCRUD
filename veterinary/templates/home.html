@@ -4,5 +4,23 @@
 {% endblock %}
 
 {% block content %}
-    Página Inicial
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-dark" style="color:white">
+        <img class="mb-4" src="https://image.flaticon.com/icons/png/512/21/21645.png" alt="" width="300" height="300">
+        {% if current_user.is_authenticated %}
+            <h1>Bem vindo(a) ao sistema VeterinaryCRUD, {{ current_user.name }}</h1>
+        {% else %}
+            <h1>Bem vindo(a) ao sistema VeterinaryCRUD</h1>
+            <br>
+            <div class="row">
+                <div class="col-6">
+                       <h5>Não possui uma conta?</h5>
+                       <a class="btn btn-sm btn-secondary" href="{{ url_for('register_user_page') }}">Registrar</a>
+                </div>
+                <div class="col-6">
+                       <h5>Já possui uma conta?</h5>
+                        <a class="btn btn-sm btn-secondary" href="{{ url_for('login_page') }}">Login</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
