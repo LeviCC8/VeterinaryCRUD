@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField, SelectField
-from wtforms.fields.html5 import DateField
+from wtforms.fields.html5 import DateField, TimeField
 from wtforms.validators import Length, EqualTo, DataRequired, ValidationError
 from veterinary.models import *
 
@@ -107,8 +107,8 @@ class RegisterAnimalForm(FlaskForm):
     submit = SubmitField(label='Cadastrar Animal')
 
 
-class DeleteAnimalForm(FlaskForm):
-    submit = SubmitField(label='Deletar Animal')
+class ConfirmForm(FlaskForm):
+    submit = SubmitField()
 
 
 class UpdateHealthForm(FlaskForm):
@@ -116,3 +116,19 @@ class UpdateHealthForm(FlaskForm):
         Length(min=3, max=30, message='Saúde precisa ter entre 3 à 30 caracteres'),
         DataRequired(message='Saúde não fornecida')])
     submit = SubmitField(label='Atualizar Saúde')
+
+
+class RegisterConsultationForm(FlaskForm):
+    date = DateField(label='Data:', format='%Y-%m-%d')
+    time = TimeField(label='Horário:', format='%H:%M')
+    submit = SubmitField(label='Cadastrar Consulta')
+
+
+class ScheduleConsultationForm(FlaskForm):
+    animals = SelectField('Paciente:', choices=[])
+    submit = SubmitField(label='Marcar Consulta')
+
+    def set_animals(self, animals):
+        self.animals.choices = []
+        for animal in animals:
+            self.animals.choices.append((animal.id, animal.name))

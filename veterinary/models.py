@@ -56,6 +56,15 @@ class Client(User):
         'polymorphic_identity':'client'
     }
 
+    def get_scheduled_consultations(self):
+        scheduled_consultations = []
+        animals = Animal.query.filter_by(client_login=self.login)
+        for animal in animals:
+            consultations = list(Consultation.query.filter_by(animal_id=animal.id))
+            if consultations:
+                scheduled_consultations += consultations
+        return scheduled_consultations
+
 
 class CreditCard(db.Model):
     number = db.Column(db.Integer(), primary_key=True)
@@ -107,6 +116,9 @@ class Animal(db.Model):
         self.health = health
         db.session.commit()
 
+    def has_consults(self):
+        return Consultation.query.filter_by(animal_id=self.id).first() is not None
+
 
 class Consultation(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
@@ -114,3 +126,13 @@ class Consultation(db.Model):
     veterinarian_login = db.Column(db.String(length=10), db.ForeignKey('user.login'), nullable=False)
     is_scheduled = db.Column(db.Boolean(), nullable=False)
     animal_id = db.Column(db.String(length=10), db.ForeignKey('animal.id'))
+
+    def schedule_consult(self, animal_id):
+        self.animal_id = animal_id
+        self.is_scheduled = True
+        db.session.commit()
+
+    def unschedule_consult(self):
+        self.animal_id = None
+        self.is_scheduled = False
+        db.session.commit()

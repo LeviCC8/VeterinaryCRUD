@@ -8,8 +8,8 @@
 </style>
 
 
-<!-- Adding Animal -->
-<div class="modal fade" id="Modal-AddIAnimal"
+<!-- Adding consultation -->
+<div class="modal fade" id="Modal-AddIConsultation"
      tabindex="-1"
      aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -17,7 +17,7 @@
             <div class="modal-header">
                 <h5 class="modal-title " id="ModalLabel">
                     <!-- -->
-                    Cadastrando um animal
+                    Cadastrando uma consulta
                 </h5>
                 <button type="button" class="close"
                         data-dismiss="modal" aria-label="Close">
@@ -26,18 +26,17 @@
             </div>
             <div class="modal-body">
                 <form method="POST" class="form-register" style="color:white">
-                    {{ register_animal_form.hidden_tag() }}
+                    {{ register_consultation_form.hidden_tag() }}
 
-                    {% for key in register_animal_form %}
-                        {% if key.type != 'SubmitField' and key.type != 'CSRFTokenField' %}
-                            {{ key.label() }}
-                            {{ key(class="form-control") }}
-                        {% endif %}
-                    {% endfor %}
+                    {{ register_consultation_form.date.label() }}
+                    {{ register_consultation_form.date(class="form-control") }}
+
+                    {{ register_consultation_form.time.label() }}
+                    {{ register_consultation_form.time(class="form-control") }}
 
                     <br>
 
-                    {{ register_animal_form.submit(class="btn btn-lg btn-block btn-primary") }}
+                    {{ register_consultation_form.submit(class="btn btn-lg btn-block btn-primary") }}
                 </form>
             </div>
             <div class="modal-footer">

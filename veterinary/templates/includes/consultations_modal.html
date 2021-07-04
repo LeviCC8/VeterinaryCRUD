@@ -8,8 +8,8 @@
 </style>
 
 
-<!-- Update Info Animal -->
-<div class="modal fade" id="Modal-UpdateInfo-{{ animal.id }}"
+<!-- Schedule Consultation -->
+<div class="modal fade" id="Modal-ScheduleConsultation-{{ consultation.id }}"
      tabindex="-1"
      aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -17,7 +17,7 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="ModalLabel">
                     <!-- -->
-                    Atualizando Informações de {{ animal.name }}
+                    Marcando consulta com {{ User.query.filter_by(login=consultation.veterinarian_login).first().name }} na data {{ consultation.date }}
                 </h5>
                 <button type="button" class="close"
                         data-dismiss="modal" aria-label="Close">
@@ -26,19 +26,15 @@
             </div>
             <div class="modal-body">
                 <form method="POST" class="form-register" style="color:white">
-                    {{ update_animal_form.hidden_tag() }}
-                    {{ update_animal_form.insert_default(animal) }}
+                    {{ schedule_consultation_form.hidden_tag() }}
+                    {{ schedule_consultation_form.set_animals(Animal.query.filter_by(client_login=current_user.login)) }}
 
-                    {% for key in update_animal_form %}
-                        {% if key.type != 'SubmitField' and key.type != 'CSRFTokenField' %}
-                            {{ key.label() }}
-                            {{ key(class="form-control", value=key.default) }}
-                        {% endif %}
-                    {% endfor %}
+                    {{ schedule_consultation_form.animals.label() }}
+                    {{ schedule_consultation_form.animals(class="form-control") }}
 
                     <br>
-                    <input id="updated_animal" name="updated_animal" type="hidden" value="{{ animal.id }}">
-                    {{ update_animal_form.submit(class="btn btn-lg btn-block btn-primary", value='Atualizar animal') }}
+                    <input id="scheduled_consultation" name="scheduled_consultation" type="hidden" value="{{ consultation.id }}">
+                    {{ schedule_consultation_form.submit(class="btn btn-lg btn-block btn-primary") }}
                 </form>
             </div>
             <div class="modal-footer">
@@ -51,16 +47,15 @@
 </div>
 
 
-<!-- Delete Animal -->
-<div class="modal fade" id="Modal-DeleteAnimal-{{ animal.id }}"
+<!-- Unschedule Consultation -->
+<div class="modal fade" id="Modal-UnscheduleConsultation-{{ consultation.id }}"
      tabindex="-1"
      aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="ModalLabel">
-                    <!-- -->
-                    Deletando {{ animal.name }}
+                    Desmarcando consulta com {{ User.query.filter_by(login=consultation.veterinarian_login).first().name }} na data {{ consultation.date }}
                 </h5>
                 <button type="button" class="close"
                         data-dismiss="modal" aria-label="Close">
@@ -68,59 +63,57 @@
                 </button>
             </div>
             <div class="modal-body">
-                {% if animal.has_consults() %}
+                <form method="POST">
+                    {{ unschedule_consultation_form.hidden_tag() }}
                     <h4 class="text-center">
-                            Opa, o animal {{ animal.name }} possui consultas marcadas, para deletá-lo desmarque-as!
+                        Você tem certeza que deseja desmarcar esta consulta?
+                    </h4>
+                    <br>
+                    <input id="unscheduled_consultation" name="unscheduled_consultation" type="hidden" value="{{ consultation.id }}">
+                    {{ unschedule_consultation_form.submit(class="btn btn-outline-danger btn-block", value="Desmarcar Consulta") }}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-dismiss="modal">Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete Consultation -->
+<div class="modal fade" id="Modal-DeleteConsultation-{{ consultation.id }}"
+     tabindex="-1"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">
+                    Deletando consulta
+                </h5>
+                <button type="button" class="close"
+                        data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% if consultation.is_scheduled %}
+                    <h4 class="text-center">
+                        Infelizmente esta consulta não pode ser deletada, pois já está marcada!
                     </h4>
                 {% else %}
-                <form method="POST">
-                    {{ delete_animal_form.hidden_tag() }}
-                    <h4 class="text-center">
-                        Você tem certeza que deseja deletar seu animal {{ animal.name }} do sistema?
-                    </h4>
-                    <br>
-                    <input id="deleted_animal" name="deleted_animal" type="hidden" value="{{ animal.id }}">
-                    {{ delete_animal_form.submit(class="btn btn-outline-danger btn-block", value="Deletar Animal") }}
-                </form>
+                    <form method="POST">
+                        {{ delete_consultation_form.hidden_tag() }}
+                        <h4 class="text-center">
+                            Você tem certeza que deseja deletar esta consulta do sistema?
+                        </h4>
+                        <br>
+                        <input id="deleted_consultation" name="deleted_consultation" type="hidden" value="{{ consultation.id }}">
+                        {{ delete_consultation_form.submit(class="btn btn-outline-danger btn-block", value="Deletar Consulta") }}
+                    </form>
                 {% endif %}
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary"
-                        data-dismiss="modal">Fechar
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- Update Health Animal -->
-<div class="modal fade" id="Modal-UpdateHealth-{{ animal.id }}"
-     tabindex="-1"
-     aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="ModalLabel">
-                    <!-- -->
-                    Atualizando Saúde de {{ animal.name }}
-                </h5>
-                <button type="button" class="close"
-                        data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" class="form-register" style="color:white">
-                    {{ update_health_form.hidden_tag() }}
-
-                    {{ update_health_form.health.label() }}
-                    {{ update_health_form.health(class="form-control") }}
-
-                    <br>
-                    <input id="updated_health" name="updated_health" type="hidden" value="{{ animal.id }}">
-                    {{ update_health_form.submit(class="btn btn-lg btn-block btn-primary") }}
-                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary"

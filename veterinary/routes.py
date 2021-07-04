@@ -3,6 +3,7 @@ from flask import render_template, redirect, url_for, flash, request
 from veterinary.models import *
 from veterinary.forms import *
 from flask_login import login_user, logout_user, login_required, current_user
+from datetime import datetime
 
 
 data = {}
@@ -140,7 +141,7 @@ def logout_page():
 def animals_page():
     update_animal_form = RegisterAnimalForm()
     register_animal_form = RegisterAnimalForm()
-    delete_animal_form = DeleteAnimalForm()
+    delete_animal_form = ConfirmForm()
     update_health_form = UpdateHealthForm()
     if request.method == 'POST':
         if current_user.is_client():
@@ -191,7 +192,7 @@ def animals_page():
             if animal_to_update:
                 if update_health_form.validate_on_submit():
                     animal_to_update.update_health(update_health_form.health.data)
-                    flash(f"A saúde do animal {animal_to_update.name} foi atualizada com sucesso para {animal_to_update.health}!",
+                    flash(f"A saúde do animal {animal_to_update.name} foi atualizada para {animal_to_update.health}!",
                           category='success')
 
                 if update_health_form.errors != {}:  # If there are errors from the validations
@@ -211,3 +212,68 @@ def animals_page():
                                delete_animal_form=delete_animal_form,
                                update_health_form=update_health_form,
                                User=User)
+
+
+@app.route('/consultations', methods=['GET', 'POST'])
+@login_required
+def consultations_page():
+    register_consultation_form = RegisterConsultationForm()
+    delete_consultation_form = ConfirmForm()
+    schedule_consultation_form = ScheduleConsultationForm()
+    unschedule_consultation_form = ConfirmForm()
+    if request.method == 'POST':
+        if current_user.is_client():
+            # Schedule Consultation logic
+            scheduled_consultation = request.form.get('scheduled_consultation')
+            consultation_to_schedule = Consultation.query.filter_by(id=scheduled_consultation).first()
+            if consultation_to_schedule:
+                consultation_to_schedule.schedule_consult(schedule_consultation_form.animals.data)
+                flash(f"Consulta marcada com sucesso!", category='success')
+
+            # Unschedule Consultation logic
+            unscheduled_consultation = request.form.get('unscheduled_consultation')
+            consultation_to_unschedule = Consultation.query.filter_by(id=unscheduled_consultation).first()
+            if consultation_to_unschedule:
+                flash(f"Sua consulta foi desmarcada com sucesso!", category='success')
+                consultation_to_unschedule.unschedule_consult()
+
+        elif current_user.is_veterinarian():
+            # Delete Consultation logic
+            deleted_consultation = request.form.get('deleted_consultation')
+            consultation_to_delete = Consultation.query.filter_by(id=deleted_consultation).first()
+            if consultation_to_delete:
+                flash(f"Sua consulta foi deletada do sistema!", category='success')
+                Consultation.query.filter_by(id=deleted_consultation).delete()
+                db.session.commit()
+
+            # Add Consultation Logic
+            if register_consultation_form.validate_on_submit() and consultation_to_delete is None:
+                date = datetime(year=register_consultation_form.date.data.year,
+                                month=register_consultation_form.date.data.month,
+                                day=register_consultation_form.date.data.day,
+                                hour=register_consultation_form.time.data.hour,
+                                minute=register_consultation_form.time.data.minute)
+                consultation_to_create = Consultation(date=date,
+                                          is_scheduled=False,
+                                          veterinarian_login=current_user.login)
+                db.session.add(consultation_to_create)
+                db.session.commit()
+                flash(f"Sua consulta foi marcada com sucesso!", category='success')
+
+        return redirect(url_for('consultations_page'))
+
+    if request.method == 'GET':
+        if current_user.is_client():
+            consultations = Consultation.query.filter_by(is_scheduled=False)
+            scheduled_consultations = current_user.get_scheduled_consultations()
+        elif current_user.is_veterinarian():
+            consultations = Consultation.query.filter_by(veterinarian_login=current_user.login)
+            scheduled_consultations = []
+        return render_template('consultations.html',
+                               consultations=consultations,
+                               scheduled_consultations=scheduled_consultations,
+                               register_consultation_form=register_consultation_form,
+                               schedule_consultation_form=schedule_consultation_form,
+                               unschedule_consultation_form=unschedule_consultation_form,
+                               delete_consultation_form=delete_consultation_form,
+                               User=User, Animal=Animal)
