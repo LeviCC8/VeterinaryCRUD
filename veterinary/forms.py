@@ -84,3 +84,28 @@ class LoginForm(FlaskForm):
     login = StringField(label='Login:', validators=[DataRequired()])
     password = PasswordField(label='Senha:', validators=[DataRequired()])
     submit = SubmitField(label='Entrar')
+
+
+class RegisterAnimalForm(FlaskForm):
+    def insert_default(self, animal):
+        self.name.default = animal.name
+        self.age.default = animal.age
+        self.type.default = animal.type
+        self.race.default = animal.race
+
+    name = StringField(label='Nome:', validators=[
+        Length(min=2, max=20, message='Nome precisa ter entre 2 à 20 caracteres'),
+        DataRequired(message='Nome não fornecido')])
+    age = IntegerField(label='Idade:', validators=[
+        DataRequired(message='Idade não fornecida')])
+    type = StringField(label='Tipo:', validators=[
+        Length(min=2, max=15, message='Tipo precisa ter entre 2 à 15 caracteres'),
+        DataRequired(message='Tipo não fornecido')])
+    race = StringField(label='Raça:', validators=[
+        Length(min=2, max=20, message='Raça precisa ter entre 2 à 20 caracteres'),
+        DataRequired(message='Raça não fornecida')])
+    submit = SubmitField(label='Cadastrar Animal')
+
+
+class DeleteAnimalForm(FlaskForm):
+    submit = SubmitField(label='Deletar Animal')

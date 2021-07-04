@@ -96,6 +96,13 @@ class Animal(db.Model):
     client_login = db.Column(db.String(length=10), db.ForeignKey('user.login'), nullable=False)
     consultations = db.relationship('Consultation', backref='animal', lazy=True)
 
+    def update_infos(self, name, age, type, race):
+        self.name = name
+        self.age = age
+        self.type = type
+        self.race = race
+        db.session.commit()
+
 
 class Consultation(db.Model):
     id = db.Column(db.Integer(), primary_key=True)

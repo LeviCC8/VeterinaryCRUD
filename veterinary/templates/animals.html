@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}
+Animais
+{% endblock %}
+
+{% block content %}
+
+<div class="row" style="margin-top:20px; margin-left:20px; margin-right:20px">
+    <h2>Animais cadastrados</h2>
+    <br>
+    <table class="table table-hover table-dark">
+        <thead>
+            <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Idade</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Raça</th>
+                <th scope="col">Saúde</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for animal in animals %}
+        {% include 'includes/animals_modal.html' %}
+        <tr>
+            <td>{{ animal.name }}</td>
+            <td>{{ animal.age }}</td>
+            <td>{{ animal.type }}</td>
+            <td>{{ animal.race }}</td>
+            <td>{{ animal.health }}</td>
+            <td>
+                <button class="btn btn-outline btn-success" data-toggle="modal"
+                        data-target="#Modal-UpdateInfo-{{ animal.id }}">Atualizar Informações
+                </button>
+                <button class="btn btn-outline btn-danger" data-toggle="modal"
+                        data-target="#Modal-DeleteAnimal-{{ animal.id }}">Remover Animal
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="container">
+        {% include 'includes/add_animal_modal.html' %}
+        <div class="row justify-content-md-center">
+            <button class="btn btn-outline btn-info" data-toggle="modal"
+                    data-target="#Modal-AddIAnimal">Adicionar um animal
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
