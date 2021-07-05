@@ -31,7 +31,7 @@ Animais
             <td>{{ animal.race }}</td>
             <td>{{ animal.health }}</td>
             {% if current_user.is_veterinarian() %}
-                <td>{{ User.query.filter_by(login=animal.client_login).first().name  }}</td>
+                <td>{{ animal.get_owner().name  }}</td>
             {% endif %}
             <td>
                 {% if current_user.is_client() %}

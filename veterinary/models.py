@@ -65,6 +65,9 @@ class Client(User):
                 scheduled_consultations += consultations
         return scheduled_consultations
 
+    def has_animals(self):
+        return Animal.query.filter_by(client_login=self.login).first() is not None
+
 
 class CreditCard(db.Model):
     number = db.Column(db.Integer(), primary_key=True)
@@ -86,6 +89,9 @@ class Veterinarian(User):
     __mapper_args__ = {
         'polymorphic_identity':'veterinarian'
     }
+
+    def has_animals(self):
+        return False
 
 
 class VeterinarianRegistration(db.Model):
@@ -118,6 +124,9 @@ class Animal(db.Model):
 
     def has_consults(self):
         return Consultation.query.filter_by(animal_id=self.id).first() is not None
+
+    def get_owner(self):
+        return Client.query.filter_by(login=self.client_login).first()
 
 
 class Consultation(db.Model):

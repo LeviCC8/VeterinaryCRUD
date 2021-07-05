@@ -15,28 +15,32 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="ModalLabel">
-                    <!-- -->
-                    Marcando consulta com {{ User.query.filter_by(login=consultation.veterinarian_login).first().name }} na data {{ consultation.date }}
-                </h5>
-                <button type="button" class="close"
-                        data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                    <h5 class="modal-title" id="ModalLabel">
+                        <!-- -->
+                        Marcando consulta com {{ User.query.filter_by(login=consultation.veterinarian_login).first().name }} na data {{ consultation.date }}
+                    </h5>
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
             </div>
-            <div class="modal-body">
-                <form method="POST" class="form-register" style="color:white">
-                    {{ schedule_consultation_form.hidden_tag() }}
-                    {{ schedule_consultation_form.set_animals(Animal.query.filter_by(client_login=current_user.login)) }}
+            {% if current_user.has_animals() %}
+                <div class="modal-body">
+                    <form method="POST" class="form-register" style="color:white">
+                        {{ schedule_consultation_form.hidden_tag() }}
+                        {{ schedule_consultation_form.set_animals(Animal.query.filter_by(client_login=current_user.login)) }}
 
-                    {{ schedule_consultation_form.animals.label() }}
-                    {{ schedule_consultation_form.animals(class="form-control") }}
+                        {{ schedule_consultation_form.animals.label() }}
+                        {{ schedule_consultation_form.animals(class="form-control") }}
 
-                    <br>
-                    <input id="scheduled_consultation" name="scheduled_consultation" type="hidden" value="{{ consultation.id }}">
-                    {{ schedule_consultation_form.submit(class="btn btn-lg btn-block btn-primary") }}
-                </form>
-            </div>
+                        <br>
+                        <input id="scheduled_consultation" name="scheduled_consultation" type="hidden" value="{{ consultation.id }}">
+                        {{ schedule_consultation_form.submit(class="btn btn-lg btn-block btn-primary") }}
+                    </form>
+                </div>
+            {% else %}
+                <div class="modal-body">Você não possui animais cadastrados no momento!</div>
+            {% endif %}
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary"
                         data-dismiss="modal">Fechar
