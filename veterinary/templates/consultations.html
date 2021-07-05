@@ -31,13 +31,13 @@ Consultas
             <tr>
                 <td>{{ consultation.date }}</td>
                 {% if current_user.is_client() %}
-                    <td>{{ User.query.filter_by(login=consultation.veterinarian_login).first().expertise  }}</td>
-                    <td>{{ User.query.filter_by(login=consultation.veterinarian_login).first().name  }}</td>
+                    <td>{{ consultation.get_veterinarian().expertise  }}</td>
+                    <td>{{ consultation.get_veterinarian().name  }}</td>
                 {% else %}
                     {% if consultation.is_scheduled %}
                         <td>Sim</td>
-                        <td> {{ Animal.query.filter_by(id=consultation.animal_id).first().name }} </td>
-                        <td> {{ User.query.filter_by(login=Animal.query.filter_by(id=consultation.animal_id).first().client_login).first().name }} </td>
+                        <td> {{ consultation.get_animal().name }} </td>
+                        <td> {{ consultation.get_animal().get_owner().name }} </td>
                     {% else %}
                         <td>Não</td>
                         <td></td>
@@ -80,9 +80,9 @@ Consultas
                 <div class="col-md-6">
                     <div style="margin-bottom: 5px" class="card text-center bg-dark">
                         <div class="card-body">
-                            <h5 class="card-title">Paciente:  {{ Animal.query.filter_by(id=consultation.animal_id).first().name }} </h5>
+                            <h5 class="card-title">Paciente:  {{ consultation.get_animal().name }} </h5>
                             <p class="card-text"><strong>
-                                Veterinário: {{ User.query.filter_by(login=consultation.veterinarian_login).first().name }}
+                                Veterinário: {{ consultation.get_veterinarian().name }}
                             </strong></p>
                             <p class="card-text"><strong>
                                 Data: {{ consultation.date }}

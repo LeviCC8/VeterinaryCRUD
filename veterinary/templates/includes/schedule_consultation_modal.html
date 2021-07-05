@@ -7,7 +7,7 @@
 
 
 {% block modal_title %}
-    Marcando consulta com {{ User.query.filter_by(login=consultation.veterinarian_login).first().name }} na data {{ consultation.date }}
+    Marcando consulta com {{ consultation.get_veterinarian().name }} na data {{ consultation.date }}
 {% endblock %}
 
 
@@ -15,7 +15,7 @@
     {% if current_user.has_animals() %}
         <form method="POST" class="form-register" style="color:white">
             {{ schedule_consultation_form.hidden_tag() }}
-            {{ schedule_consultation_form.set_animals(Animal.query.filter_by(client_login=current_user.login)) }}
+            {{ schedule_consultation_form.set_animals(current_user.get_animals()) }}
 
             {{ schedule_consultation_form.animals.label() }}
             {{ schedule_consultation_form.animals(class="form-control") }}

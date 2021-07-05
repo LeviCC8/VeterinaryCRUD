@@ -68,6 +68,9 @@ class Client(User):
     def has_animals(self):
         return Animal.query.filter_by(client_login=self.login).first() is not None
 
+    def get_animals(self):
+        return Animal.query.filter_by(client_login=self.login) if self.has_animals() else None
+
 
 class CreditCard(db.Model):
     number = db.Column(db.Integer(), primary_key=True)
@@ -145,3 +148,9 @@ class Consultation(db.Model):
         self.animal_id = None
         self.is_scheduled = False
         db.session.commit()
+
+    def get_veterinarian(self):
+        return Veterinarian.query.filter_by(login=self.veterinarian_login).first()
+
+    def get_animal(self):
+        return Animal.query.filter_by(id=self.animal_id).first()

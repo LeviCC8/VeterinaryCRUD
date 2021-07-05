@@ -7,7 +7,7 @@
 
 
 {% block modal_title %}
-    Desmarcando consulta com {{ User.query.filter_by(login=consultation.veterinarian_login).first().name }} na data {{ consultation.date }}
+    Desmarcando consulta com {{ consultation.get_veterinarian().name }} na data {{ consultation.date }}
 {% endblock %}
 
 
@@ -15,7 +15,7 @@
     <form method="POST">
         {{ unschedule_consultation_form.hidden_tag() }}
         <h4 class="text-center">
-            Você tem certeza que deseja desmarcar esta consulta?
+            Você tem certeza que deseja desmarcar esta consulta de {{ consultation.get_animal().name }}?
         </h4>
         <br>
         <input id="unscheduled_consultation" name="unscheduled_consultation" type="hidden" value="{{ consultation.id }}">
