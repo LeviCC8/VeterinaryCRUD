@@ -23,7 +23,9 @@ Animais
         </thead>
         <tbody>
         {% for animal in animals %}
-        {% include 'includes/animals_modal.html' %}
+        {% include 'includes/update_animal_modal.html' %}
+        {% include 'includes/delete_animal_modal.html' %}
+        {% include 'includes/update_animal_health_modal.html' %}
         <tr>
             <td>{{ animal.name }}</td>
             <td>{{ animal.age }}</td>

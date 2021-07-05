@@ -1,0 +1,25 @@
+{% extends 'includes/base_modal.html' %}
+
+
+{% block id %}
+    "Modal-UnscheduleConsultation-{{ consultation.id }}"
+{% endblock %}
+
+
+{% block modal_title %}
+    Desmarcando consulta com {{ User.query.filter_by(login=consultation.veterinarian_login).first().name }} na data {{ consultation.date }}
+{% endblock %}
+
+
+{% block modal_body %}
+    <form method="POST">
+        {{ unschedule_consultation_form.hidden_tag() }}
+        <h4 class="text-center">
+            Você tem certeza que deseja desmarcar esta consulta?
+        </h4>
+        <br>
+        <input id="unscheduled_consultation" name="unscheduled_consultation" type="hidden" value="{{ consultation.id }}">
+        {{ unschedule_consultation_form.submit(class="btn btn-outline-danger btn-block", value="Desmarcar Consulta") }}
+    </form>
+{% endblock %}
+

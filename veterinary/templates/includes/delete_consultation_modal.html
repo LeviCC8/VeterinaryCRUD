@@ -1,0 +1,31 @@
+{% extends 'includes/base_modal.html' %}
+
+
+{% block id %}
+    "Modal-DeleteConsultation-{{ consultation.id }}"
+{% endblock %}
+
+
+{% block modal_title %}
+    Deletando consulta
+{% endblock %}
+
+
+{% block modal_body %}
+    {% if consultation.is_scheduled %}
+        <h4 class="text-center">
+            Infelizmente esta consulta não pode ser deletada, pois já está marcada!
+        </h4>
+    {% else %}
+        <form method="POST">
+            {{ delete_consultation_form.hidden_tag() }}
+            <h4 class="text-center">
+                Você tem certeza que deseja deletar esta consulta do sistema?
+            </h4>
+            <br>
+            <input id="deleted_consultation" name="deleted_consultation" type="hidden" value="{{ consultation.id }}">
+            {{ delete_consultation_form.submit(class="btn btn-outline-danger btn-block", value="Deletar Consulta") }}
+        </form>
+    {% endif %}
+{% endblock %}
+

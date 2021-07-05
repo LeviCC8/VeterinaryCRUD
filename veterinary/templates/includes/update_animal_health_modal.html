@@ -1,0 +1,25 @@
+{% extends 'includes/base_modal.html' %}
+
+
+{% block id %}
+    "Modal-UpdateHealth-{{ animal.id }}"
+{% endblock %}
+
+
+{% block modal_title %}
+    Atualizando Saúde de {{ animal.name }}
+{% endblock %}
+
+
+{% block modal_body %}
+    <form method="POST" class="form-register" style="color:white">
+        {{ update_health_form.hidden_tag() }}
+
+        {{ update_health_form.health.label() }}
+        {{ update_health_form.health(class="form-control") }}
+
+        <br>
+        <input id="updated_health" name="updated_health" type="hidden" value="{{ animal.id }}">
+        {{ update_health_form.submit(class="btn btn-lg btn-block btn-primary") }}
+    </form>
+{% endblock %}

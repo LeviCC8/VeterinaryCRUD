@@ -27,7 +27,7 @@ Consultas
             </thead>
             <tbody>
             {% for consultation in consultations %}
-            {% include 'includes/consultations_modal.html' %}
+            {% include 'includes/schedule_consultation_modal.html' %}
             <tr>
                 <td>{{ consultation.date }}</td>
                 {% if current_user.is_client() %}
@@ -76,7 +76,7 @@ Consultas
         <br>
         <div class="row">
             {% for consultation in scheduled_consultations %}
-            {% include 'includes/consultations_modal.html' %}
+            {% include 'includes/unschedule_consultation_modal.html' %}
                 <div class="col-md-6">
                     <div style="margin-bottom: 5px" class="card text-center bg-dark">
                         <div class="card-body">

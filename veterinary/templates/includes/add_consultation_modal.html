@@ -1,49 +1,29 @@
-<style>
-  .modal-content {
-    background-color: #212121
-  }
+{% extends 'includes/base_modal.html' %}
 
 
+{% block id %}
+    "Modal-AddIConsultation"
+{% endblock %}
 
-</style>
+
+{% block modal_title %}
+    Cadastrando uma consulta
+{% endblock %}
 
 
-<!-- Adding consultation -->
-<div class="modal fade" id="Modal-AddIConsultation"
-     tabindex="-1"
-     aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title " id="ModalLabel">
-                    <!-- -->
-                    Cadastrando uma consulta
-                </h5>
-                <button type="button" class="close"
-                        data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" class="form-register" style="color:white">
-                    {{ register_consultation_form.hidden_tag() }}
+{% block modal_body %}
+    <form method="POST" class="form-register" style="color:white">
+        {{ register_consultation_form.hidden_tag() }}
 
-                    {{ register_consultation_form.date.label() }}
-                    {{ register_consultation_form.date(class="form-control") }}
+        {{ register_consultation_form.date.label() }}
+        {{ register_consultation_form.date(class="form-control") }}
 
-                    {{ register_consultation_form.time.label() }}
-                    {{ register_consultation_form.time(class="form-control") }}
+        {{ register_consultation_form.time.label() }}
+        {{ register_consultation_form.time(class="form-control") }}
 
-                    <br>
+        <br>
 
-                    {{ register_consultation_form.submit(class="btn btn-lg btn-block btn-primary") }}
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary"
-                        data-dismiss="modal">Fechar
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+        {{ register_consultation_form.submit(class="btn btn-lg btn-block btn-primary") }}
+    </form>
+{% endblock %}
+

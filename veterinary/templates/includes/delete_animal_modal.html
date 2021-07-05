@@ -1,0 +1,30 @@
+{% extends 'includes/base_modal.html' %}
+
+
+{% block id %}
+    "Modal-DeleteAnimal-{{ animal.id }}"
+{% endblock %}
+
+
+{% block modal_title %}
+    Deletando {{ animal.name }}
+{% endblock %}
+
+
+{% block modal_body %}
+    {% if animal.has_consults() %}
+        <h4 class="text-center">
+            Opa, o animal {{ animal.name }} possui consultas marcadas, para deletá-lo desmarque-as!
+        </h4>
+    {% else %}
+    <form method="POST">
+        {{ delete_animal_form.hidden_tag() }}
+        <h4 class="text-center">
+            Você tem certeza que deseja deletar seu animal {{ animal.name }} do sistema?
+        </h4>
+        <br>
+        <input id="deleted_animal" name="deleted_animal" type="hidden" value="{{ animal.id }}">
+        {{ delete_animal_form.submit(class="btn btn-outline-danger btn-block", value="Deletar Animal") }}
+    </form>
+    {% endif %}
+{% endblock %}

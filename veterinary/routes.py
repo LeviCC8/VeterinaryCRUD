@@ -123,7 +123,7 @@ def animals_page():
                 flash_form_errors_messages(register_animal_form, 'Falha no registro do novo animal')
 
         elif current_user.is_veterinarian():
-            update_health()
+            update_health(update_health_form)
             flash_form_errors_messages(update_health_form, 'Falha na atualização da saúde do animal')
 
         return redirect(url_for('animals_page'))

@@ -1,0 +1,31 @@
+{% extends 'includes/base_modal.html' %}
+
+
+{% block id %}
+    "Modal-ScheduleConsultation-{{ consultation.id }}"
+{% endblock %}
+
+
+{% block modal_title %}
+    Marcando consulta com {{ User.query.filter_by(login=consultation.veterinarian_login).first().name }} na data {{ consultation.date }}
+{% endblock %}
+
+
+{% block modal_body %}
+    {% if current_user.has_animals() %}
+        <form method="POST" class="form-register" style="color:white">
+            {{ schedule_consultation_form.hidden_tag() }}
+            {{ schedule_consultation_form.set_animals(Animal.query.filter_by(client_login=current_user.login)) }}
+
+            {{ schedule_consultation_form.animals.label() }}
+            {{ schedule_consultation_form.animals(class="form-control") }}
+
+            <br>
+            <input id="scheduled_consultation" name="scheduled_consultation" type="hidden" value="{{ consultation.id }}">
+            {{ schedule_consultation_form.submit(class="btn btn-lg btn-block btn-primary") }}
+        </form>
+    {% else %}
+        <h4 class="text-center">Você não possui animais cadastrados no momento!</h4>
+    {% endif %}
+{% endblock %}
+
