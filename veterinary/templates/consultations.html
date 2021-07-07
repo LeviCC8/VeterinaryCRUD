@@ -28,6 +28,7 @@ Consultas
             <tbody>
             {% for consultation in consultations %}
             {% include 'includes/schedule_consultation_modal.html' %}
+            {% include 'includes/delete_consultation_modal.html' %}
             <tr>
                 <td>{{ consultation.date }}</td>
                 {% if current_user.is_client() %}
