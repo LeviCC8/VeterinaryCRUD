@@ -40,12 +40,6 @@ class User(db.Model, UserMixin):
     def is_veterinarian(self):
         return self.user_type == 'veterinarian'
 
-    def register(self):
-        pass
-
-    def login_account(self):
-        pass
-
 
 class Client(User):
     __tablename__ = 'client'
